@@ -1,0 +1,4 @@
+*.obj
+*.pdb
+read-files/log2mega.txt
+*.ilk
