@@ -1,5 +1,7 @@
-#include <string>
-#include <iostream>
+
+
+#ifndef LOG_H
+#define LOG_H
 
 struct LOG
 {
@@ -16,3 +18,7 @@ struct LOG
         user =  "";
     }
 };
+
+typedef std::shared_ptr<LOG> shared_log;
+
+#endif
