@@ -17,7 +17,7 @@ int main()
 {
 setlocale(LC_ALL, "Portuguese");
 vector<shared_log> logs;
-deserialize_json("read-files/log_10.txt", logs);
+deserialize_json("read-files/log2mega.txt", logs);
 cout<<"Objetos lidos: "<<logs.size()<<endl;
 return 0;
 }
@@ -25,7 +25,6 @@ return 0;
 void deserialize_json(const string& filename, vector<shared_log>& logs)
 {
     FuncTimer ts(__FUNCTION__);
-    int32 x=0;
 try {
 ifstream ifs(filename);
 if(!ifs.is_open())
@@ -43,7 +42,7 @@ ifs.close();
 cout<<"Bites lidos: "<<str.size()<<endl;
 picojson::value val;
 cout<<picojson::parse(val, str)<<endl;
-picojson::array arr=val.get<picojson::array>();
+picojson::array& arr=val.get<picojson::array>();
 if(arr.size()==0)
 {
 cout<<"Nenhum objeto encontrado"<<endl;
@@ -52,7 +51,6 @@ return;
 logs.reserve(arr.size()+1);
 for(auto it=arr.begin(); it!=arr.end(); ++it)
 {
-    x++;
 picojson::object obj=(*it).get<picojson::object>();
 shared_log lg=make_shared<LOG>();
 if(obj.count("month")>0)
@@ -79,7 +77,5 @@ logs.push_back(lg);
 }
 } catch(const exception& e ) {
 cout<<"Exception: "<<e.what()<<endl;
-cout<<x<<endl;
 }
-
 }
