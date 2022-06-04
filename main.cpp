@@ -12,13 +12,37 @@
 
 using namespace std;
 
+vector<vector<shared_log>> separed(12);
+
+
 void deserialize_json(const string& filename, vector<shared_log>& logs);
+void sort_logs(vector<shared_log>& logs);
+int getIndex(string month);
+vector<shared_log>  findElement(int32 index);
 int main()
 {
 setlocale(LC_ALL, "Portuguese");
 vector<shared_log> logs;
-deserialize_json("read-files/log2mega.txt", logs);
+deserialize_json("read-files/log_10.txt", logs);
 cout<<"Objetos lidos: "<<logs.size()<<endl;
+sort_logs(logs);
+for(uint32 i=0; i<separed.size(); i++)
+{
+for(uint32 i1=0; i1<separed[i].size(); i1++)
+{
+    cout<<separed[i][i1];
+}
+}
+for(int i=0; i<12; i++)
+{
+vector<shared_log> s=findElement(i);
+cout<<"Array size: "<<s.size()<<endl;
+if(s.size()>0)
+{
+cout<<s[0]<<endl;
+}
+}
+
 return 0;
 }
 
@@ -79,3 +103,52 @@ logs.push_back(lg);
 cout<<"Exception: "<<e.what()<<endl;
 }
 }
+
+
+void sort_logs(vector<shared_log>& logs)
+{
+for(auto& it : logs)
+{
+    int32 index=getIndex(it->month);
+    separed[index].push_back(it);
+}
+}
+
+int getIndex(string month)
+{
+month[0]=tolower(month[0]);
+map<string, int32> months={
+{"january", 0},
+{"february", 1},
+{"march", 2},
+{"april", 3},
+{"may", 4},
+{"june", 5},
+{"july", 6},
+{"august", 7},
+{"september", 8},
+{"october", 9},
+{"november", 10},
+{"december", 11}
+};
+auto it=months.find(month);
+if(it==months.end())
+{
+return -1;
+}
+return it->second;
+}
+
+vector<shared_log>  findElement(int32 index)
+{
+    int32 x=0;
+    for(int i=0; i<separed.size(); i++)
+    {
+x+=separed[i].size();
+if((x>=index)&&(separed[i].size()>0))
+{
+return separed[i];
+}
+}
+return vector<shared_log>();
+    }

@@ -21,4 +21,10 @@ struct LOG
 
 typedef std::shared_ptr<LOG> shared_log;
 
+std::ostream& operator<<(std::ostream& os, const shared_log& s)
+{
+    os<<"Month: "<<s->month<<"\tID: "<<s->id<<"\tUser: "<<s->user<<std::endl;
+    return os;
+}
+
 #endif
