@@ -18,7 +18,7 @@ vector<vector<shared_log>> separed(12);
 void deserialize_json(const string& filename, vector<shared_log>& logs);
 void sort_logs(vector<shared_log>& logs);
 int getIndex(string month);
-vector<shared_log>  findElement(int32 index);
+vector<shared_log>  findElement(int32 index, int32* outindex);
 int main()
 {
 setlocale(LC_ALL, "Portuguese");
@@ -33,6 +33,7 @@ for(uint32 i1=0; i1<separed[i].size(); i1++)
     cout<<separed[i][i1];
 }
 }
+/*
 for(int i=0; i<12; i++)
 {
 vector<shared_log> s=findElement(i);
@@ -41,6 +42,14 @@ if(s.size()>0)
 {
 cout<<s[0]<<endl;
 }
+}
+*/
+int32 index=0;
+vector<shared_log> s=findElement(2, &index);
+cout<<"Array size: "<<s.size()<<endl;
+if(s.size()>0)
+{
+cout<<s[index]<<endl;
 }
 
 return 0;
@@ -139,14 +148,19 @@ return -1;
 return it->second;
 }
 
-vector<shared_log>  findElement(int32 index)
+vector<shared_log>  findElement(int32 index, int32* outindex)
 {
     int32 x=0;
     for(int i=0; i<separed.size(); i++)
     {
+int last=x;        
 x+=separed[i].size();
-if((x>=index)&&(separed[i].size()>0))
+if((x>index)&&(separed[i].size()>0))
 {
+    if(outindex!=NULL)
+    {
+        *outindex=(index-last);
+    }
 return separed[i];
 }
 }
