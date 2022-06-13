@@ -19,13 +19,15 @@ void deserialize_json(const string& filename, vector<shared_log>& logs);
 void sort_logs(vector<shared_log>& logs);
 int getIndex(string month);
 vector<shared_log>  findElement(int32 index, int32* outindex);
+void ccsort(vector<shared_log>& arr);
 int main()
 {
 setlocale(LC_ALL, "Portuguese");
 vector<shared_log> logs;
-deserialize_json("read-files/log_10.txt", logs);
+deserialize_json("read-files/log2mega.txt", logs);
 cout<<"Objetos lidos: "<<logs.size()<<endl;
 sort_logs(logs);
+/*
 for(uint32 i=0; i<separed.size(); i++)
 {
 for(uint32 i1=0; i1<separed[i].size(); i1++)
@@ -33,20 +35,16 @@ for(uint32 i1=0; i1<separed[i].size(); i1++)
     cout<<separed[i][i1];
 }
 }
-/*
+*/
+cout<<"Mostrando size mêses..."<<endl;
 for(int i=0; i<12; i++)
 {
-vector<shared_log> s=findElement(i);
-cout<<"Array size: "<<s.size()<<endl;
-if(s.size()>0)
-{
-cout<<s[0]<<endl;
+cout<<separed[i].size()<<endl;
 }
-}
-*/
 int32 index=0;
-vector<shared_log> s=findElement(2, &index);
+vector<shared_log> s=findElement(1000000, &index);
 cout<<"Array size: "<<s.size()<<endl;
+ccsort(s);
 if(s.size()>0)
 {
 cout<<s[index]<<endl;
@@ -166,3 +164,30 @@ return separed[i];
 }
 return vector<shared_log>();
     }
+
+void ccsort(vector<shared_log>& arr)
+{
+if(arr.size()<2)
+{
+return;
+}
+vector<vector<shared_log>> arr2;
+for(uint32 i=0; i<arr.size(); i++)
+{
+if(arr[i]->id>arr2.size())
+{
+arr2.resize(arr[i]->id+1);
+}
+arr2[arr[i]->id].push_back(arr[i]);
+}
+arr.clear();
+for(uint32 i=0; i<arr2.size(); i++)
+{
+uint32 x=0;
+while(x<arr2[i].size())
+{
+arr.push_back(arr2[i][x]);
+x++;
+}
+}
+}
