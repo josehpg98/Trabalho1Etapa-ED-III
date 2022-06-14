@@ -23,7 +23,7 @@ typedef std::shared_ptr<LOG> shared_log;
 
 std::ostream& operator<<(std::ostream& os, const shared_log& s)
 {
-    os<<"Month: "<<s->month<<"\tID: "<<s->id<<"\tUser: "<<s->user<<std::endl;
+    os<<"Month: "<<s->month<<"\tLOG_ID: "<<s->id<<"\tUser: "<<s->user<<"\tMSG:"<<s->msg<<std::endl;
     return os;
 }
 

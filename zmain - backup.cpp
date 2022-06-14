@@ -12,40 +12,45 @@
 
 using namespace std;
 
+vector<vector<shared_log>> separed(12);
 
 
 void deserialize_json(const string& filename, vector<shared_log>& logs);
+void sort_logs(vector<shared_log>& logs);
 int getIndex(string month);
-uint32 findMax(const vector<shared_log>& logs);
-void ccsort(vector<shared_log>& logs);
-void sort_month(vector<shared_log>& logs);
-ostream& operator<<(ostream& os, const vector<shared_log>& logs);
+vector<shared_log>  findElement(int32 index, int32* outindex);
+void ccsort(vector<shared_log>& arr);
 int main()
 {
 setlocale(LC_ALL, "Portuguese");
 vector<shared_log> logs;
 deserialize_json("read-files/log2mega.txt", logs);
-cout<<"Ordenando vetor..."<<endl;
-ccsort(logs);
-cout<<"Vetor Ordenado!"<<endl;
-cout<<logs.size()<<endl;
-cout<<"Possíveis culpados:"<<endl;
-cout<<"Índice 1000000: "<<logs[1000000]<<endl;
-cout<<"Índice 1000001: "<<logs[1000001]<<endl;
-return 0;
+cout<<"Objetos lidos: "<<logs.size()<<endl;
+sort_logs(logs);
+/*
+for(uint32 i=0; i<separed.size(); i++)
+{
+for(uint32 i1=0; i1<separed[i].size(); i1++)
+{
+    cout<<separed[i][i1];
+}
+}
+*/
+cout<<"Mostrando size mêses..."<<endl;
+for(int i=0; i<12; i++)
+{
+cout<<separed[i].size()<<endl;
+}
+int32 index=0;
+vector<shared_log> s=findElement(1000000, &index);
+cout<<"Array size: "<<s.size()<<endl;
+ccsort(s);
+if(s.size()>0)
+{
+cout<<s[index]<<endl;
 }
 
-ostream& operator<<(ostream& os, const vector<shared_log>& logs)
-{
-for(uint32 i=0; i<logs.size(); i++)
-{
-if(i>5)
-{
-break;
-}
-cout<<logs[i]<<endl;
-}
-return os;
+return 0;
 }
 
 void deserialize_json(const string& filename, vector<shared_log>& logs)
@@ -106,10 +111,20 @@ cout<<"Exception: "<<e.what()<<endl;
 }
 }
 
+
+void sort_logs(vector<shared_log>& logs)
+{
+for(auto& it : logs)
+{
+    int32 index=getIndex(it->month);
+    separed[index].push_back(it);
+}
+}
+
 int getIndex(string month)
 {
 month[0]=tolower(month[0]);
-static map<string, int32> months={
+map<string, int32> months={
 {"january", 0},
 {"february", 1},
 {"march", 2},
@@ -131,66 +146,48 @@ return -1;
 return it->second;
 }
 
-uint32 findMax(const vector<shared_log>& logs)
+vector<shared_log>  findElement(int32 index, int32* outindex)
 {
-if(logs.size()==0)
+    int32 x=0;
+    for(int i=0; i<separed.size(); i++)
+    {
+int last=x;        
+x+=separed[i].size();
+if((x>index)&&(separed[i].size()>0))
 {
-return 0;
-}
-uint32 x=logs[0]->id;
-for(uint32 i=1; i<logs.size(); i++)
-{
-if(logs[i]->id>x)
-{
-x=logs[i]->id;
+    if(outindex!=NULL)
+    {
+        *outindex=(index-last);
+    }
+return separed[i];
 }
 }
-return x;
-}
+return vector<shared_log>();
+    }
 
-void ccsort(vector<shared_log>& logs)
+void ccsort(vector<shared_log>& arr)
 {
-FuncTimer ts(__FUNCTION__);
-vector<vector<shared_log>> months;
-months.resize(12);
-for(uint32 i=0; i<logs.size(); i++)
+if(arr.size()<2)
 {
-int32 x=getIndex(logs[i]->month);
-if((x<0)||(x>11))
-{
-continue;
+return;
 }
-months[x].push_back(logs[i]);
-}
-logs.clear();
-for(uint32 i=0; i<months.size(); i++)
-{
-sort_month(months[i]);
-for(uint32 i1=0; i1<months[i].size(); i1++)
-{
-logs.push_back(months[i][i1]);
-}
-}
-}
-
-void sort_month(vector<shared_log>& logs)
-{
-vector<vector<shared_log>> arr;
-arr.resize(findMax(logs)+1);
-for(uint32 i=0; i<logs.size(); i++)
-{
-arr[logs[i]->id].push_back(logs[i]);
-}
-logs.clear();
+vector<vector<shared_log>> arr2;
 for(uint32 i=0; i<arr.size(); i++)
 {
-if(arr[i].size()==0)
+if(arr[i]->id>arr2.size())
 {
-continue;
+arr2.resize(arr[i]->id+1);
 }
-for(uint32 i1=0; i1<arr[i].size(); i1++)
+arr2[arr[i]->id].push_back(arr[i]);
+}
+arr.clear();
+for(uint32 i=0; i<arr2.size(); i++)
 {
-logs.push_back(arr[i][i1]);
+uint32 x=0;
+while(x<arr2[i].size())
+{
+arr.push_back(arr2[i][x]);
+x++;
 }
 }
 }
