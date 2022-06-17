@@ -14,7 +14,6 @@ using namespace std;
 
 
 
-uint32 counter=0;
 vector<shared_log> original_logs;
 void deserialize_json(const string& filename, vector<shared_log>& logs);
 void reset_vector(vector<shared_log>& logs);
@@ -88,6 +87,7 @@ void reset_vector(vector<shared_log>& logs)
 logs.clear();
 logs=original_logs;
 }
+
 void deserialize_json(const string& filename, vector<shared_log>& logs)
 {
     FuncTimer ts(__FUNCTION__);
@@ -180,7 +180,6 @@ months.resize(12);
 //Primeiro, vamos classificar os elementos por mês.
 for(uint32 i=0; i<logs.size(); i++)
 {
-counter++;
 //Converte o mês em um index para ser usado.
 int index=getIndex(logs[i]->month);
 months[index].push_back(logs[i]);
@@ -189,7 +188,6 @@ logs.clear();
 //Segundo passo, percorrer os 12 vetores dos mêses e classificar cada um deles.
 for(uint32 i=0; i<months.size(); i++)
 {
-counter++;
 //Ignora se o vetor estiver vazio...
 if(months[i].size()==0)
 {
@@ -199,7 +197,6 @@ continue;
 int higher=months[i][0]->id;
 for(uint32 i1=1; i1<months[i].size(); i1++)
 {
-counter++;
 if(months[i][i1]->id>higher)
 {
 higher=months[i][i1]->id;
@@ -208,37 +205,28 @@ higher=months[i][i1]->id;
 //Terceiro passo, vamos iterar sobre as casas decimais para podermos ordenar por dígitos...
 for(uint32 place=1; (higher/place)>0; place*=10)
 {
-counter++;
 //Nossa matriz de classificação  por dígitos vai aqui...
 vector<vector<shared_log>> digits;
 digits.resize(10);
 //Agora percorremos o mês indicado por I e vamos ordenando dígito a dígito...
 for(uint32 i1=0; i1<months[i].size(); i1++)
 {
-counter++;
 //Vamos calcular o nosso dígito que nos dará um número entre 0 e 9.
 int32 digit=(months[i][i1]->id/place)%10;
-if(digits[digit].size()==0)
-{
-digits[digit].reserve(200000);
-}
 digits[digit].push_back(months[i][i1]);
 }
 //E remontamos nosso vetor do mês...
 months[i].clear();
 for(uint32 x=0; x<digits.size(); x++)
 {
-counter++;
 for(uint32 y=0; y<digits[x].size(); y++)
 {
-counter++;
 months[i].push_back(digits[x][y]);
 }
 }
 }
 for(uint32 i1=0; i1<months[i].size(); i1++)
 {
-counter++;
 logs.push_back(months[i][i1]);
 }
 }
