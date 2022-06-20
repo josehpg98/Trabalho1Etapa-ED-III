@@ -19,8 +19,8 @@ void reset_vector(vector<shared_log>& logs);
 int getIndex(string month);
 void radix_sort(vector<shared_log>& logs);
 void counting_sort(vector<shared_log>& logs);
-bool special_find(vector<shared_log>& logs, uint32 find_index, shared_log& out_element);
-
+bool special_sort_radix(vector<shared_log>& logs, uint32 find_index, shared_log& out_element);
+bool special_sort_counting(vector<shared_log>& logs, uint32 find_index, shared_log& out_element);
 ostream& operator<<(ostream& os, const vector<shared_log>& logs);
 
 int main()
@@ -40,7 +40,8 @@ int main()
             cout<<"Escolha uma opção de ordenação:"<<endl;
             cout<<"1: Counting sort"<<endl;
             cout<<"2: Radix sort"<<endl;
-            cout<<"3: Special_sort:"<<endl;
+            cout<<"3: Special_sort com radix_sort:"<<endl;
+            cout<<"4: Special_sort com counting_sort:"<<endl;
             cout<<"0: Sair"<<endl;
             int x=-1;
             cin>>x;
@@ -67,7 +68,17 @@ case 3:
 shared_log lg;
 uint32 find_index=1000000;
                     reset_vector(logs);
-special_find(logs, find_index, lg);
+special_sort_radix(logs, find_index, lg);
+                    cout<<"O culpado é: "<<lg->user<<endl;
+                    cout<<"Entrada completa:\n"<<lg<<endl;
+break;
+}
+case 4:
+{
+shared_log lg;
+uint32 find_index=1000000;
+                    reset_vector(logs);
+special_sort_counting(logs, find_index, lg);
                     cout<<"O culpado é: "<<lg->user<<endl;
                     cout<<"Entrada completa:\n"<<lg<<endl;
 break;
@@ -325,7 +336,7 @@ void counting_sort(vector<shared_log>& logs)
     }
 }
 
-bool special_find(vector<shared_log>& logs, uint32 find_index, shared_log& out_element)
+bool special_sort_radix(vector<shared_log>& logs, uint32 find_index, shared_log& out_element)
 {
 FuncTimer sc(__FUNCTION__);
 vector<vector<shared_log>> months;
@@ -355,6 +366,40 @@ if((month_index<0)||(sz_index<0))
 return false;
 }
 radix_sort(months[month_index]);
+out_element=months[month_index][sz_index];
+return true;
+}
+
+bool special_sort_counting(vector<shared_log>& logs, uint32 find_index, shared_log& out_element)
+{
+FuncTimer sc(__FUNCTION__);
+vector<vector<shared_log>> months;
+months.resize(12);
+//Primeiro, classificar os logs quanto ao mês...
+for(uint32 i=0; i<logs.size(); i++)
+{
+months[getIndex(logs[i]->month)].push_back(logs[i]);
+}
+//Segundo, calcular em que mês e índice estará o registro solicitado pelo parâmetro find_index;
+int32 month_index=-1;
+int32 sz_index=-1;
+int32 general_index=0;
+    for(int32 i=0; i<months.size(); i++)
+    {
+int32 last=general_index;
+general_index+=months[i].size();
+if((general_index>find_index)&&(months[i].size()>0))
+{
+sz_index=(find_index-last);
+month_index=i;
+break;
+}
+}
+if((month_index<0)||(sz_index<0))
+{
+return false;
+}
+counting_sort(months[month_index]);
 out_element=months[month_index][sz_index];
 return true;
 }
