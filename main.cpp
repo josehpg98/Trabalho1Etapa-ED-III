@@ -35,58 +35,70 @@ int main()
         bool sair=false;
         int32 index=1000000;
 
+        cout << endl;
+
         while(sair==false)
         {
-            cout<<"Escolha uma opção de ordenação:"<<endl;
+            //system("cls");
+            cout<<"Escolha uma opcao de ordenacao:"<<endl;
             cout<<"1: Counting sort"<<endl;
             cout<<"2: Radix sort"<<endl;
             cout<<"3: Special_sort com radix_sort:"<<endl;
             cout<<"4: Special_sort com counting_sort:"<<endl;
             cout<<"0: Sair"<<endl;
             int x=-1;
+            cout << "Escolha: ";
             cin>>x;
             switch(x)
             {
                 case 1:
                 {
+                    system("cls");
                     reset_vector(logs);
                     counting_sort(logs);
-                    cout<<"O culpado é: "<<logs[index]->user<<endl;
-                    cout<<"Entrada completa:\n"<<logs[index]<<endl;
+                    cout<<"\nO culpado eh: "<<logs[index]->user<<endl;
+                    cout<<"\nEntrada completa:\n"<<logs[index]<<endl;
+                    getchar();
                     break;
                 }
                 case 2:
                 {
+                    system("cls");
                     reset_vector(logs);
                     radix_sort(logs);
-                    cout<<"O culpado é: "<<logs[index]->user<<endl;
-                    cout<<"Entrada completa:\n"<<logs[index]<<endl;
+                    cout<<"\nO culpado eh: "<<logs[index]->user<<endl;
+                    cout<<"\nEntrada completa:\n"<<logs[index]<<endl;
+                    getchar();
                     break;
                 }
-case 3:
-{
-shared_log lg;
-uint32 find_index=1000000;
+                case 3:
+                {
+                    system("cls");
+                    shared_log lg;
+                    uint32 find_index=1000000;
                     reset_vector(logs);
-special_sort_radix(logs, find_index, lg);
-                    cout<<"O culpado é: "<<lg->user<<endl;
-                    cout<<"Entrada completa:\n"<<lg<<endl;
-break;
-}
-case 4:
-{
-shared_log lg;
-uint32 find_index=1000000;
+                    special_sort_radix(logs, find_index, lg);
+                    cout<<"\nO culpado eh: "<<lg->user<<endl;
+                    cout<<"\nEntrada completa:\n"<<lg<<endl;
+                    getchar();
+                    break;
+                }
+                case 4:
+                {
+                    system("cls");
+                    shared_log lg;
+                    uint32 find_index=1000000;
                     reset_vector(logs);
-special_sort_counting(logs, find_index, lg);
-                    cout<<"O culpado é: "<<lg->user<<endl;
-                    cout<<"Entrada completa:\n"<<lg<<endl;
-break;
-}
+                    special_sort_counting(logs, find_index, lg);
+                    cout<<"\nO culpado eh: "<<lg->user<<endl;
+                    cout<<"\nEntrada completa:\n"<<lg<<endl;
+                    getchar();
+                    break;
+                }
                 case 0:
                 {
                     sair=true;
-                    cout<<"Até mais!"<<endl;
+                    cout<<"Ate mais!"<<endl;
                     break;
                 }
             }
@@ -127,7 +139,7 @@ void deserialize_json(const string& filename, vector<shared_log>& logs)
 
         if(!ifs.is_open())
         {
-            cout<<"Néo consegui abrir o arquivo "<<filename<<endl;
+            cout<<"Nao consegui abrir o arquivo "<<filename<<endl;
             return;
         }
 
@@ -220,16 +232,16 @@ void radix_sort(vector<shared_log>& logs)
     vector<vector<shared_log>> months;
     months.resize(12);
 
-    //Primeiro, vamos classificar os elementos por més.
+    //Primeiro, vamos classificar os elementos por mes.
     for(uint32 i=0; i<logs.size(); i++)
     {
-    //Converte o més em um index para ser usado.
+    //Converte o mes em um index para ser usado.
         int index=getIndex(logs[i]->month);
         months[index].push_back(logs[i]);
     }
     logs.clear();
 
-    //Segundo passo, percorrer os 12 vetores dos méses e classificar cada um deles.
+    //Segundo passo, percorrer os 12 vetores dos meses e classificar cada um deles.
     for(uint32 i=0; i<months.size(); i++)
     {
         //Ignora se o vetor estiver vazio...
@@ -238,7 +250,7 @@ void radix_sort(vector<shared_log>& logs)
             continue;
         }
 
-        //Para o radix funcionar, precisamos descobrir quem é o maior elemento.
+        //Para o radix funcionar, precisamos descobrir quem eh o maior elemento.
         int higher=months[i][0]->id;
         for(uint32 i1=1; i1<months[i].size(); i1++)
         {
@@ -248,22 +260,22 @@ void radix_sort(vector<shared_log>& logs)
             }
         }
 
-        //Terceiro passo, vamos iterar sobre as casas decimais para podermos ordenar por dégitos...
+        //Terceiro passo, vamos iterar sobre as casas decimais para podermos ordenar por digitos...
         for(uint32 place=1; (higher/place)>0; place*=10)
         {
-            //Nossa matriz de classificaééo  por dégitos vai aqui...
+            //Nossa matriz de classificacao  por digitos vai aqui...
             vector<vector<shared_log>> digits;
             digits.resize(10);
 
-            //Agora percorremos o més indicado por I e vamos ordenando dégito a dégito...
+            //Agora percorremos o mes indicado por I e vamos ordenando digito a digito...
             for(uint32 i1=0; i1<months[i].size(); i1++)
             {
-                //Vamos calcular o nosso dégito que nos daré um némero entre 0 e 9.
+                //Vamos calcular o nosso digito que nos dara um numero entre 0 e 9.
                 int32 digit=(months[i][i1]->id/place)%10;
                 digits[digit].push_back(months[i][i1]);
             }
 
-            //E remontamos nosso vetor do més...
+            //E remontamos nosso vetor do mes...
             months[i].clear();
             for(uint32 x=0; x<digits.size(); x++)
             {
@@ -295,7 +307,7 @@ void counting_sort(vector<shared_log>& logs)
     }
     logs.clear();
 
-    //Percorrer os méses e ordenar cada vetor...
+    //Percorrer os meses e ordenar cada vetor...
     for(uint32 i=0; i<months.size(); i++)
     {
         if(months[i].size()==0)
@@ -338,68 +350,82 @@ void counting_sort(vector<shared_log>& logs)
 
 bool special_sort_radix(vector<shared_log>& logs, uint32 find_index, shared_log& out_element)
 {
-FuncTimer sc(__FUNCTION__);
-vector<vector<shared_log>> months;
-months.resize(12);
-//Primeiro, classificar os logs quanto ao mês...
-for(uint32 i=0; i<logs.size(); i++)
-{
-months[getIndex(logs[i]->month)].push_back(logs[i]);
-}
-//Segundo, calcular em que mês e índice estará o registro solicitado pelo parâmetro find_index;
-int32 month_index=-1;
-int32 sz_index=-1;
-int32 general_index=0;
+    FuncTimer sc(__FUNCTION__);
+    vector<vector<shared_log>> months;
+    months.resize(12);
+    
+    //Primeiro, classificar os logs quanto ao mes...
+    for(uint32 i=0; i<logs.size(); i++)
+    {
+        months[getIndex(logs[i]->month)].push_back(logs[i]);
+    }
+
+    //Segundo, calcular em que mes e indice estara o registro solicitado pelo parametro find_index;
+    int32 month_index=-1;
+    int32 sz_index=-1;
+    int32 general_index=0;
+    
     for(int32 i=0; i<months.size(); i++)
     {
-int32 last=general_index;
-general_index+=months[i].size();
-if((general_index>find_index)&&(months[i].size()>0))
-{
-sz_index=(find_index-last);
-month_index=i;
-break;
-}
-}
-if((month_index<0)||(sz_index<0))
-{
-return false;
-}
-radix_sort(months[month_index]);
-out_element=months[month_index][sz_index];
-return true;
+        int32 last=general_index;
+        general_index+=months[i].size();
+
+        if((general_index>find_index)&&(months[i].size()>0))
+        {
+            sz_index=(find_index-last);
+            month_index=i;
+            break;
+        }
+    }
+
+    if((month_index<0)||(sz_index<0))
+    {
+        return false;
+    }
+
+    radix_sort(months[month_index]);
+    out_element=months[month_index][sz_index];
+
+    return true;
 }
 
 bool special_sort_counting(vector<shared_log>& logs, uint32 find_index, shared_log& out_element)
 {
-FuncTimer sc(__FUNCTION__);
-vector<vector<shared_log>> months;
-months.resize(12);
-//Primeiro, classificar os logs quanto ao mês...
-for(uint32 i=0; i<logs.size(); i++)
-{
-months[getIndex(logs[i]->month)].push_back(logs[i]);
-}
-//Segundo, calcular em que mês e índice estará o registro solicitado pelo parâmetro find_index;
-int32 month_index=-1;
-int32 sz_index=-1;
-int32 general_index=0;
+    FuncTimer sc(__FUNCTION__);
+    vector<vector<shared_log>> months;
+    months.resize(12);
+
+    //Primeiro, classificar os logs quanto ao mes...
+    for(uint32 i=0; i<logs.size(); i++)
+    {
+        months[getIndex(logs[i]->month)].push_back(logs[i]);
+    }
+
+    //Segundo, calcular em que mes e indice estara o registro solicitado pelo parametro find_index;
+    int32 month_index=-1;
+    int32 sz_index=-1;
+    int32 general_index=0;
+
     for(int32 i=0; i<months.size(); i++)
     {
-int32 last=general_index;
-general_index+=months[i].size();
-if((general_index>find_index)&&(months[i].size()>0))
-{
-sz_index=(find_index-last);
-month_index=i;
-break;
-}
-}
-if((month_index<0)||(sz_index<0))
-{
-return false;
-}
-counting_sort(months[month_index]);
-out_element=months[month_index][sz_index];
-return true;
+        int32 last=general_index;
+        general_index+=months[i].size();
+
+        if((general_index>find_index)&&(months[i].size()>0))
+        {
+            sz_index=(find_index-last);
+            month_index=i;
+            break;
+        }
+    }
+
+    if((month_index<0)||(sz_index<0))
+    {
+        return false;
+    }
+
+    counting_sort(months[month_index]);
+    out_element=months[month_index][sz_index];
+
+    return true;
 }
