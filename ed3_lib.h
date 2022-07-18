@@ -170,6 +170,6 @@ start=gettimestamp();
 FuncTimer::~FuncTimer()
 {
 int64 end=gettimestamp();
-std::cout<<"A função "<<this->func_name<<" levou "<<(end-start)<<" ms para ser concluída."<<std::endl;
+std::cout<<"A função "<<this->func_name<<" levou "<<(end-start)<<" mcs para ser concluída."<<std::endl;
 }
 #endif

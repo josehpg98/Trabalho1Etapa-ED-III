@@ -512,24 +512,22 @@ x++;
 }
 return x;
 }
-int32 find_left(const vector<shared_log>& arr, int32 start_index)
+uint32 find_left(const vector<shared_log>& arr, uint32 start_index)
 {
-int32 x=start_index;
-while((x>=0)&&(arr[x]->id==arr[start_index]->id))
+uint32 x=start_index;
+while((x>0)&&(arr[x-1]->id==arr[start_index]->id))
 {
 x--;
 }
-x++;
 return x;
 }
-int32 find_right(const vector<shared_log>& arr, int32 start_index)
+uint32 find_right(const vector<shared_log>& arr, uint32 start_index)
 {
-int32 x=start_index;
-while((x<arr.size())&&(arr[x]->id==arr[start_index]->id))
+uint32 x=start_index;
+while((x<arr.size()-1)&&(arr[x+1]->id==arr[start_index]->id))
 {
 x++;
 }
-x--;
 return x;
 }
 void copy(const vector<shared_log>& source, vector<shared_log>& arr, uint32 start, uint32 end)
@@ -553,10 +551,10 @@ struct BinarySearch
 {
 bool operator()(const vector<shared_log>& arr, uint32 val, uint32* start, uint32* end)
 {
-int m1=0;
-int32 m2=arr.size()-1;
-int32 x=-1;
-int32 index=-1;
+uint32 m1=0;
+uint32 m2=arr.size()-1;
+uint32 x=arr.size();
+uint32 index=arr.size();
 if(arr.size()==0)
 {
 return false;
@@ -582,7 +580,7 @@ if(arr[m2]->id==val)
 {
 index=m2;
 }
-if(index>-1)
+if(index<arr.size())
 {
 RangeFinder rf;
 *start=rf.find_left(arr, index);
@@ -621,40 +619,62 @@ struct InterpolationSearch
 {
 bool operator()(const vector<shared_log>& arr, uint32 val, uint32* start, uint32* end)
 {
-int m1=0;
-int32 m2=arr.size()-1;
-int32 x=-1;
-int32 index=-1;
-if(arr.size()==0)
+int32 m1=0;
+int32 m2=(arr.size()-1);
+int32 distancia=val-arr[m1]->id;
+int32 intervalo=arr[m2]->id-arr[m1]->id;
+int32 fracao=distancia/intervalo;
+int32 intervalo_indice=(m2-m1);
+int32 chute=(m1+fracao)*intervalo_indice;
+int32 i=0;
+int32 index=arr.size();
+while(i<m2)
 {
-return false;
+int32 temp=chute;
+chute+=pow(2, i);
+if(chute>m2)
+{
+chute=m2;
 }
-while((arr[m1]->id<=val)&&(arr[m2]->id>=val))
+if(arr[chute]->id==val)
 {
-x=m1+((val-arr[m1]->id)*(m2-m1))/(arr[m2]->id-arr[m1]->id);
-if(arr[x]->id<val)
-{
-m1=(x+1);
+index=chute;
+break;
 }
-else if(arr[x]->id>val)
+else if(arr[chute]->id<val)
 {
-m1=(x-1);
+i++;
 }
-else
+else if(arr[chute]->id>val)
+{
+m1=0;
+m2=(arr.size()-1);
+int32 x=arr.size();
+while(m1<m2)
+{
+x=(m1+m2)/2;
+if(arr[x]->id==val)
 {
 index=x;
 break;
 }
-}
-if(arr[m1]->id==val)
+else if(val<arr[x]->id)
 {
-index=m1;
+m2=(x-1);
 }
-else if(arr[m2]->id==val)
+else
+{
+m1=(x+1);
+}
+}
+if(arr[m2]->id==val)
 {
 index=m2;
 }
-if(index>-1)
+break;
+}
+}
+if(index<arr.size())
 {
 RangeFinder rf;
 *start=rf.find_left(arr, index);
