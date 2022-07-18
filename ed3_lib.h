@@ -70,7 +70,7 @@ int64 gettimestamp()
 {
 std::chrono::system_clock::time_point tp=std::chrono::system_clock::now();
 std::chrono::system_clock::duration dtn=tp.time_since_epoch();
-return std::chrono::duration_cast<std::chrono::milliseconds>(dtn).count();
+return std::chrono::duration_cast<std::chrono::microseconds>(dtn).count();
 }
 
 int32 random_int32(int32 min_val, int32 max_val)

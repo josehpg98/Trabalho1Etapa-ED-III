@@ -1,5 +1,6 @@
 
 
+#include<format>
 #include<iostream>
 #include<string>
 #include<memory>
@@ -21,8 +22,22 @@ void radix_sort(vector<shared_log>& logs);
 void counting_sort(vector<shared_log>& logs);
 bool special_sort_radix(vector<shared_log>& logs, uint32 find_index, shared_log& out_element);
 bool special_sort_counting(vector<shared_log>& logs, uint32 find_index, shared_log& out_element);
+void find_logs_by_id_binary_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value);
+void find_logs_by_id_interpolation_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value);
+void find_logs_by_id_linear_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value);
 ostream& operator<<(ostream& os, const vector<shared_log>& logs);
 
+void log_write(const string& s)
+{
+static ofstream ofn("zlog.txt");
+ofn<<s<<endl;
+cout<<s<<endl;
+}
+#define _log(str, ...) log_write(vformat(str, make_format_args(__VA_ARGS__)))
+bool operator<(const shared_log& l1, const shared_log& l2)
+{
+return l1->id<l2->id;
+}
 int main()
 {
     setlocale(LC_ALL, "Portuguese");
@@ -36,7 +51,7 @@ int main()
         int32 index=1000000;
 
         cout << endl;
-
+bool sorted=false;
         while(sair==false)
         {
             //system("cls");
@@ -45,6 +60,9 @@ int main()
             cout<<"2: Radix sort"<<endl;
             cout<<"3: Special_sort com radix_sort:"<<endl;
             cout<<"4: Special_sort com counting_sort:"<<endl;
+cout<<"5: Buscar registros com busca binária"<<endl;
+cout<<"6: Buscar registros com busca interpolada"<<endl;
+cout<<"7: Buscar registros com busca linear"<<endl;
             cout<<"0: Sair"<<endl;
             int x=-1;
             cout << "Escolha: ";
@@ -58,6 +76,7 @@ int main()
                     counting_sort(logs);
                     cout<<"\nO culpado eh: "<<logs[index]->user<<endl;
                     cout<<"\nEntrada completa:\n"<<logs[index]<<endl;
+sorted=true;
                     getchar();
                     break;
                 }
@@ -68,6 +87,7 @@ int main()
                     radix_sort(logs);
                     cout<<"\nO culpado eh: "<<logs[index]->user<<endl;
                     cout<<"\nEntrada completa:\n"<<logs[index]<<endl;
+sorted=true;
                     getchar();
                     break;
                 }
@@ -80,6 +100,7 @@ int main()
                     special_sort_radix(logs, find_index, lg);
                     cout<<"\nO culpado eh: "<<lg->user<<endl;
                     cout<<"\nEntrada completa:\n"<<lg<<endl;
+sorted=true;
                     getchar();
                     break;
                 }
@@ -92,9 +113,51 @@ int main()
                     special_sort_counting(logs, find_index, lg);
                     cout<<"\nO culpado eh: "<<lg->user<<endl;
                     cout<<"\nEntrada completa:\n"<<lg<<endl;
+sorted=true;
                     getchar();
                     break;
                 }
+case 5:
+case 6:
+case 7:
+{
+int id=-1;
+cout<<"Digite o número de log a buscar: ";
+cin>>id;
+cout<<endl;
+if(id<0)
+{
+cout<<"Log inválido!"<<endl;
+break;
+}
+if(sorted==false)
+{
+radix_sort(logs);
+sorted=true;
+}
+vector<shared_log> results;
+if(x==5)
+{
+find_logs_by_id_binary_search(logs, results, id);
+}
+else if(x==6)
+{
+find_logs_by_id_interpolation_search(logs, results, id);
+}
+else if(x==7)
+{
+find_logs_by_id_linear_search(logs, results, id);
+}
+cout<<"Total de resultados encontrados para o id "<<id<<": "<<results.size()<<endl;
+if(results.size()>0)
+{
+for(auto& it: results)
+{
+//cout<<it<<endl;
+}
+}
+break;
+}
                 case 0:
                 {
                     sair=true;
@@ -135,6 +198,7 @@ void deserialize_json(const string& filename, vector<shared_log>& logs)
 
     try 
     {
+int64 start=gettimestamp();
         ifstream ifs(filename);
 
         if(!ifs.is_open())
@@ -151,6 +215,8 @@ void deserialize_json(const string& filename, vector<shared_log>& logs)
         ifs.read(&str[0], str.size());
         str.resize(ifs.gcount());
         ifs.close();
+int64 final=(gettimestamp()-start);
+cout<<"Tempo de leitura: "<<final<<" ms"<<endl;
         cout<<"Bites lidos: "<<str.size()<<endl;
         picojson::value val;
         cout<<picojson::parse(val, str)<<endl;
@@ -200,8 +266,10 @@ void deserialize_json(const string& filename, vector<shared_log>& logs)
 
 int getIndex(string month)
 {
-    month[0]=tolower(month[0]);
-    
+for(uint32 i=0; i<month.size(); i++)
+{
+month[i]=tolower(month[i]);
+}
     static map<string, int32> months={
         {"january", 0},
         {"february", 1},
@@ -428,4 +496,201 @@ bool special_sort_counting(vector<shared_log>& logs, uint32 find_index, shared_l
     out_element=months[month_index][sz_index];
 
     return true;
+}
+
+struct RangeFinder
+{
+uint32 count(const vector<shared_log>& logs, uint32 id)
+{
+uint32 x=0;
+for(auto& it:logs)
+{
+if(it->id==id)
+{
+x++;
+}
+}
+return x;
+}
+int32 find_left(const vector<shared_log>& arr, int32 start_index)
+{
+int32 x=start_index;
+while((x>=0)&&(arr[x]->id==arr[start_index]->id))
+{
+x--;
+}
+x++;
+return x;
+}
+int32 find_right(const vector<shared_log>& arr, int32 start_index)
+{
+int32 x=start_index;
+while((x<arr.size())&&(arr[x]->id==arr[start_index]->id))
+{
+x++;
+}
+x--;
+return x;
+}
+void copy(const vector<shared_log>& source, vector<shared_log>& arr, uint32 start, uint32 end)
+{
+uint32 x=0;
+for(uint32 i=start; i<=end; i++)
+{
+if(i>=source.size())
+{
+break;
+}
+arr.push_back(source[i]);
+x++;
+}
+}
+};
+
+void find_logs_by_id_binary_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value)
+{
+struct BinarySearch
+{
+bool operator()(const vector<shared_log>& arr, uint32 val, uint32* start, uint32* end)
+{
+int m1=0;
+int32 m2=arr.size()-1;
+int32 x=-1;
+int32 index=-1;
+if(arr.size()==0)
+{
+return false;
+}
+while(m1<m2)
+{
+x=(m1+m2)/2;
+if(arr[x]->id==val)
+{
+index=x;
+break;
+}
+else if(val<arr[x]->id)
+{
+m2=(x-1);
+}
+else
+{
+m1=(x+1);
+}
+}
+if(arr[m2]->id==val)
+{
+index=m2;
+}
+if(index>-1)
+{
+RangeFinder rf;
+*start=rf.find_left(arr, index);
+*end=rf.find_right(arr, index);
+return true;
+}
+return false;
+}
+};
+static BinarySearch bs;
+static RangeFinder rf;
+vector<vector<shared_log>> htable;
+htable.resize(12);
+for(uint32 i=0; i<logs.size(); i++)
+{
+htable[getIndex(logs[i]->month)].push_back(logs[i]);
+}
+FuncTimer ts(__FUNCTION__);
+for(uint32 i=0; i<htable.size(); i++)
+{
+if(htable[i].size()==0)
+{
+continue;
+}
+uint32 start_index=0, end_index=0;
+if(bs(htable[i], value, &start_index, &end_index))
+{
+rf.copy(htable[i], results, start_index, end_index);
+}
+}
+}
+
+void find_logs_by_id_interpolation_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value)
+{
+struct InterpolationSearch
+{
+bool operator()(const vector<shared_log>& arr, uint32 val, uint32* start, uint32* end)
+{
+int m1=0;
+int32 m2=arr.size()-1;
+int32 x=-1;
+int32 index=-1;
+if(arr.size()==0)
+{
+return false;
+}
+while((arr[m1]->id<=val)&&(arr[m2]->id>=val))
+{
+x=m1+((val-arr[m1]->id)*(m2-m1))/(arr[m2]->id-arr[m1]->id);
+if(arr[x]->id<val)
+{
+m1=(x+1);
+}
+else if(arr[x]->id>val)
+{
+m1=(x-1);
+}
+else
+{
+index=x;
+break;
+}
+}
+if(arr[m1]->id==val)
+{
+index=m1;
+}
+else if(arr[m2]->id==val)
+{
+index=m2;
+}
+if(index>-1)
+{
+RangeFinder rf;
+*start=rf.find_left(arr, index);
+*end=rf.find_right(arr, index);
+return true;
+}
+return false;
+}
+};
+static InterpolationSearch bs;
+static RangeFinder rf;
+vector<vector<shared_log>> htable;
+htable.resize(12);
+for(uint32 i=0; i<logs.size(); i++)
+{
+htable[getIndex(logs[i]->month)].push_back(logs[i]);
+}
+FuncTimer ts(__FUNCTION__);
+for(uint32 i=0; i<htable.size(); i++)
+{
+uint32 start=0, end=0;
+if(bs(htable[i], value, &start, &end))
+{
+rf.copy(htable[i], results, start, end);
+}
+}
+}
+
+void find_logs_by_id_linear_search(const vector<shared_log>& logs, vector<shared_log>& results, int32 value)
+{
+FuncTimer ts(__FUNCTION__);
+for(auto it=logs.begin(); it!=logs.end(); ++it)
+{
+if((*it)->id==value)
+{
+results.push_back((*it));
+}
+}
 }
