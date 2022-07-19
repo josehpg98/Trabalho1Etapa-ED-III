@@ -1,29 +1,28 @@
 
 
 /**
-*Escrito por Roger em 20/04/2022
-*Biblioteca que contém algumas funções e classeis úteis para as aulas de estruturas de dados 3.
-*Tem função de timestamp, função de geração de números aleatórios, e função para preenxer um vetor com números aleatoriamente.
-*Também tem uma classe para depurar o tempo de duração de uma função.
-*Bom proveito!
-**/
+ *Escrito por Roger em 20/04/2022
+ *Biblioteca que contï¿½m algumas funï¿½ï¿½es e classeis ï¿½teis para as aulas de estruturas de dados 3.
+ *Tem funï¿½ï¿½o de timestamp, funï¿½ï¿½o de geraï¿½ï¿½o de nï¿½meros aleatï¿½rios, e funï¿½ï¿½o para preenxer um vetor com nï¿½meros aleatoriamente.
+ *Tambï¿½m tem uma classe para depurar o tempo de duraï¿½ï¿½o de uma funï¿½ï¿½o.
+ *Bom proveito!
+ **/
 
 #ifndef ED3_LIB_H
 #define ED3_LIB_H
 
-#include<iostream>
-#include<stdlib.h>
-#include<algorithm>
-#include<fstream>
-#include<string>
-#include<functional>
-#include<chrono>
-#include<stdint.h>
-#include<random>
-#include<vector>
+#include <iostream>
+#include <stdlib.h>
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include <functional>
+#include <chrono>
+#include <stdint.h>
+#include <random>
+#include <vector>
 
-
-//Costume pessoal, isso...
+// Costume pessoal, isso...
 typedef int8_t int8;
 typedef uint8_t uint8;
 typedef int16_t int16;
@@ -33,143 +32,142 @@ typedef uint32_t uint32;
 typedef int64_t int64;
 typedef uint64_t uint64;
 
-//Recuperar o tempo em millisegundos desde 01/01/1970...
+// Recuperar o tempo em millisegundos desde 01/01/1970...
 int64 gettimestamp();
-//Retorna um número aleatório entre min_val e max_val...
+// Retorna um nï¿½mero aleatï¿½rio entre min_val e max_val...
 int32 random_int32(int32 min_val, int32 max_val);
-//Preenxe um vector com a quantidade especificada de itens...
-void fill_vector(std::vector<int32>& vect, uint32 size, int32 min_val=0, int32 max_val=100);
-//Ler uma lista de números de um arquivo e preenxer o vetor...
-bool fill_vector_from_file(const std::string& filename, std::vector<int32>& vect);
-//Sobrecarga para printar um std::vector...
-std::ostream& operator<<(std::ostream& os, const std::vector<int32>& vect);
+// Preenxe um vector com a quantidade especificada de itens...
+void fill_vector(std::vector<int32> &vect, uint32 size, int32 min_val = 0, int32 max_val = 100);
+// Ler uma lista de nï¿½meros de um arquivo e preenxer o vetor...
+bool fill_vector_from_file(const std::string &filename, std::vector<int32> &vect);
+// Sobrecarga para printar um std::vector...
+std::ostream &operator<<(std::ostream &os, const std::vector<int32> &vect);
 
-void print_vector(const std::vector<int32>& vect,int32 n);
-
+void print_vector(const std::vector<int32> &vect, int32 n);
 
 /**
-*Classe para cronometrar a duração de uma determinada função.
-*Basta instanciar passando como parâmetro algum nome que queira para identificar, ou passar a macro __FUNCTION__.
-*Ela printa no construtor quando entrou na função, e no destruidor antes da função sair mostrando o tempo que ficou ativa.
-**/
+ *Classe para cronometrar a duraï¿½ï¿½o de uma determinada funï¿½ï¿½o.
+ *Basta instanciar passando como parï¿½metro algum nome que queira para identificar, ou passar a macro __FUNCTION__.
+ *Ela printa no construtor quando entrou na funï¿½ï¿½o, e no destruidor antes da funï¿½ï¿½o sair mostrando o tempo que ficou ativa.
+ **/
 class FuncTimer
 {
 public:
-std::string func_name;//Nome da função...
-int64 start;//Timestamp, em millisegundos de quando instanciou a classe...
-FuncTimer(const std::string& func_name);
-~FuncTimer();
+  std::string func_name; // Nome da funï¿½ï¿½o...
+  int64 start;           // Timestamp, em millisegundos de quando instanciou a classe...
+  FuncTimer(const std::string &func_name);
+  ~FuncTimer();
 };
 #endif
 
 #ifndef ED3_LIB_IMPLEMENTATION
 #define ED3_LIB_IMPLEMENTATION
 
-//Retorna a quantidade de millisegundos desde 01/01/1970
+// Retorna a quantidade de millisegundos desde 01/01/1970
 int64 gettimestamp()
 {
-std::chrono::system_clock::time_point tp=std::chrono::system_clock::now();
-std::chrono::system_clock::duration dtn=tp.time_since_epoch();
-return std::chrono::duration_cast<std::chrono::microseconds>(dtn).count();
+  std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+  std::chrono::system_clock::duration dtn = tp.time_since_epoch();
+  return std::chrono::duration_cast<std::chrono::microseconds>(dtn).count();
 }
 
 int32 random_int32(int32 min_val, int32 max_val)
 {
-  unsigned seed =static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
-std::default_random_engine generator (seed);
-std::uniform_int_distribution<int32> distribution(min_val, max_val);
-return distribution(generator);
+  unsigned seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
+  std::default_random_engine generator(seed);
+  std::uniform_int_distribution<int32> distribution(min_val, max_val);
+  return distribution(generator);
 }
 
-void fill_vector(std::vector<int32>& vect, uint32 size, int32 min_val, int32 max_val)
+void fill_vector(std::vector<int32> &vect, uint32 size, int32 min_val, int32 max_val)
 {
-vect.resize(0);
-vect.reserve(size+1);
-for(uint32 i=0; i<size; i++)
-{
-vect.push_back(random_int32(min_val, max_val));
-}
+  vect.resize(0);
+  vect.reserve(size + 1);
+  for (uint32 i = 0; i < size; i++)
+  {
+    vect.push_back(random_int32(min_val, max_val));
+  }
 }
 
 /**
-*Preenxe um vetor lendo os números de um arquivo.
-*Os números devem estar um por linha.
-**/
-bool fill_vector_from_file(const std::string& filename, std::vector<int32>& vect)
+ *Preenxe um vetor lendo os nï¿½meros de um arquivo.
+ *Os nï¿½meros devem estar um por linha.
+ **/
+bool fill_vector_from_file(const std::string &filename, std::vector<int32> &vect)
 {
-vect.resize(0);
-std::ifstream ifs(filename);
-if(!ifs.is_open())
-{
-std::cout<<"Erro ao ler o arquivo "<<filename<<". O arquivo provavelmente não existe."<<std::endl;
-return false;
-}
-while(!ifs.eof())
-{
-std::string line="";
-std::getline(ifs, line);
-if(line.size()==0)
-{
-continue;
-}
-vect.push_back(atoi(line.c_str()));
-}
-ifs.close();
-return true;
-}
-
-void print_vector(const std::vector<int32>& vect,int32 n)
-{
-std::cout<<"Mostrando os primeiros "<<n<<" elementos do vector..."<<std::endl;
-if(vect.size()==0)
-{
-std::cout<<"O vetor está vazio!!"<<std::endl;
-return;
-}
-int32 x=0;
-for(int32 i=0; i<n; i++)
-{
-if(i>=vect.size())
-{
-break;
-}
-std::cout<<vect[i];
-x++;
-if(x>=10)
-{
-x=0;
-std::cout<<std::endl;
-}
-else
-{
-std::cout<<"\t";
-}
-}
-std::cout<<std::endl;
+  vect.resize(0);
+  std::ifstream ifs(filename);
+  if (!ifs.is_open())
+  {
+    std::cout << "Erro ao ler o arquivo " << filename << ". O arquivo provavelmente nï¿½o existe." << std::endl;
+    return false;
+  }
+  while (!ifs.eof())
+  {
+    std::string line = "";
+    std::getline(ifs, line);
+    if (line.size() == 0)
+    {
+      continue;
+    }
+    vect.push_back(atoi(line.c_str()));
+  }
+  ifs.close();
+  return true;
 }
 
-std::ostream& operator<<(std::ostream& os, const std::vector<int32>& vect)
+void print_vector(const std::vector<int32> &vect, int32 n)
 {
-std::cout<<"Mostrando vector com "<<vect.size()<<" elementos..."<<std::endl;
-for(auto it=vect.begin(); it!=vect.end(); ++it)
-{
-std::cout<<(*it)<<std::endl;
-}
-return os;
+  std::cout << "Mostrando os primeiros " << n << " elementos do vector..." << std::endl;
+  if (vect.size() == 0)
+  {
+    std::cout << "O vetor estï¿½ vazio!!" << std::endl;
+    return;
+  }
+  int32 x = 0;
+  for (int32 i = 0; i < n; i++)
+  {
+    if (i >= vect.size())
+    {
+      break;
+    }
+    std::cout << vect[i];
+    x++;
+    if (x >= 10)
+    {
+      x = 0;
+      std::cout << std::endl;
+    }
+    else
+    {
+      std::cout << "\t";
+    }
+  }
+  std::cout << std::endl;
 }
 
-//Classe de cronometração...
-FuncTimer::FuncTimer(const std::string& func_name)
+std::ostream &operator<<(std::ostream &os, const std::vector<int32> &vect)
 {
-this->func_name=func_name;
-std::cout<<"Entrando na função: "<<func_name<<std::endl;
-start=gettimestamp();
+  std::cout << "Mostrando vector com " << vect.size() << " elementos..." << std::endl;
+  for (auto it = vect.begin(); it != vect.end(); ++it)
+  {
+    std::cout << (*it) << std::endl;
+  }
+  return os;
+}
+
+// Classe de cronometraï¿½ï¿½o...
+FuncTimer::FuncTimer(const std::string &func_name)
+{
+  this->func_name = func_name;
+  std::cout << "Entrando na funï¿½ï¿½o: " << func_name << std::endl;
+  start = gettimestamp();
 }
 
 //"Evitar a fadiga..."
 FuncTimer::~FuncTimer()
 {
-int64 end=gettimestamp();
-std::cout<<"A função "<<this->func_name<<" levou "<<(end-start)<<" mcs para ser concluída."<<std::endl;
+  int64 end = gettimestamp();
+  std::cout << "A funï¿½ï¿½o " << this->func_name << " levou " << (end - start) << " mcs para ser concluï¿½da." << std::endl;
 }
 #endif
