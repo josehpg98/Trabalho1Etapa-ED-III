@@ -3,8 +3,8 @@
 /**
  *Escrito por Roger em 20/04/2022
  *Biblioteca que contï¿½m algumas funï¿½ï¿½es e classeis ï¿½teis para as aulas de estruturas de dados 3.
- *Tem funï¿½ï¿½o de timestamp, funï¿½ï¿½o de geraï¿½ï¿½o de nï¿½meros aleatï¿½rios, e funï¿½ï¿½o para preenxer um vetor com nï¿½meros aleatoriamente.
- *Tambï¿½m tem uma classe para depurar o tempo de duraï¿½ï¿½o de uma funï¿½ï¿½o.
+ *Tem função de timestamp, função de geraï¿½ï¿½o de nï¿½meros aleatï¿½rios, e função para preenxer um vetor com nï¿½meros aleatoriamente.
+ *Tambï¿½m tem uma classe para depurar o tempo de duraï¿½ï¿½o de uma função.
  *Bom proveito!
  **/
 
@@ -46,14 +46,14 @@ std::ostream &operator<<(std::ostream &os, const std::vector<int32> &vect);
 void print_vector(const std::vector<int32> &vect, int32 n);
 
 /**
- *Classe para cronometrar a duraï¿½ï¿½o de uma determinada funï¿½ï¿½o.
+ *Classe para cronometrar a duraï¿½ï¿½o de uma determinada função.
  *Basta instanciar passando como parï¿½metro algum nome que queira para identificar, ou passar a macro __FUNCTION__.
- *Ela printa no construtor quando entrou na funï¿½ï¿½o, e no destruidor antes da funï¿½ï¿½o sair mostrando o tempo que ficou ativa.
+ *Ela printa no construtor quando entrou na função, e no destruidor antes da função sair mostrando o tempo que ficou ativa.
  **/
 class FuncTimer
 {
 public:
-  std::string func_name; // Nome da funï¿½ï¿½o...
+  std::string func_name; // Nome da função...
   int64 start;           // Timestamp, em millisegundos de quando instanciou a classe...
   FuncTimer(const std::string &func_name);
   ~FuncTimer();
@@ -160,7 +160,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<int32> &vect)
 FuncTimer::FuncTimer(const std::string &func_name)
 {
   this->func_name = func_name;
-  std::cout << "Entrando na funï¿½ï¿½o: " << func_name << std::endl;
+  std::cout << "Entrando na função: " << func_name << std::endl;
   start = gettimestamp();
 }
 
@@ -168,6 +168,6 @@ FuncTimer::FuncTimer(const std::string &func_name)
 FuncTimer::~FuncTimer()
 {
   int64 end = gettimestamp();
-  std::cout << "A funï¿½ï¿½o " << this->func_name << " levou " << (end - start) << " mcs para ser concluï¿½da." << std::endl;
+  std::cout << "A função " << this->func_name << " levou " << (end - start) << " mcs para ser concluída." << std::endl;
 }
 #endif

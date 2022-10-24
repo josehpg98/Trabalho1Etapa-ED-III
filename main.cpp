@@ -61,7 +61,7 @@ int main()
             cout << "2: Radix sort" << endl;
             cout << "3: Special_sort com radix_sort:" << endl;
             cout << "4: Special_sort com counting_sort:" << endl;
-            cout << "5: Buscar registros com busca binï¿½ria" << endl;
+            cout << "5: Buscar registros com busca binária" << endl;
             cout << "6: Buscar registros com busca interpolada" << endl;
             cout << "7: Buscar registros com busca linear" << endl;
             cout << "0: Sair" << endl;
@@ -127,12 +127,12 @@ int main()
             case 7:
             {
                 int id = -1;
-                cout << "Digite o nï¿½mero de log a buscar: ";
+                cout << "Digite o número de log a buscar: ";
                 cin >> id;
                 cout << endl;
                 if (id < 0)
                 {
-                    cout << "Log invï¿½lido!" << endl;
+                    cout << "Log inválido!" << endl;
                     break;
                 }
                 if (sorted == false)
@@ -156,9 +156,15 @@ int main()
                 cout << "Total de resultados encontrados para o id " << id << ": " << results.size() << endl;
                 if (results.size() > 0)
                 {
+uint32 j=0;
                     for (auto &it : results)
                     {
-                        // cout<<it<<endl;
+                         cout<<it<<endl;
+j++;
+if(j>2)
+{
+break;
+}
                     }
                 }
                 break;
@@ -222,7 +228,7 @@ void deserialize_json(const string &filename, vector<shared_log> &logs)
         str.resize(ifs.gcount());
         ifs.close();
         int64 final = (gettimestamp() - start);
-        cout << "Tempo de leitura: " << final << " ms" << endl;
+        cout << "Tempo de leitura: " << final << " mcs" << endl;
         cout << "Bites lidos: " << str.size() << endl;
         picojson::value val;
         cout << picojson::parse(val, str) << endl;
